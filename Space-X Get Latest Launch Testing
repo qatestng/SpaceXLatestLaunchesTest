@@ -1,0 +1,6 @@
+Space-X API Improvements required 
+
+1. Get All Launches from get launches API
+2. filter details of launch for the latest date and save to environment variable
+3. Get Latest launch from latest api
+4. Verify response against set environment variable

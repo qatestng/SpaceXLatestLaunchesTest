@@ -1,0 +1,146 @@
+{
+	"info": {
+		"_postman_id": "77d10bea-948f-454a-b819-0a39b77d74c4",
+		"name": "Space-X Latest Launch Result",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "GET SPACE-X All Launches",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Get All Launches \r",
+							"const allLaunches = pm.response.json();\r",
+							"\r",
+							"// Get Latest Launch \r",
+							"var data = JSON.parse(responseBody);   \r",
+							"var counter=0; \r",
+							"postman.setEnvironmentVariable(\"latestLaunchID\", allLaunches[0].id);\r",
+							"postman.setEnvironmentVariable(\"latestLaunchDateUtc\", allLaunches[0].date_utc);\r",
+							"postman.setEnvironmentVariable(\"latestLaunchDateUtcStr\", allLaunches[0].date_utc.substring(0,10));\r",
+							"var latestLaunchDateUtcStr = allLaunches[0].date_utc.substring(0,10);\r",
+							"postman.setEnvironmentVariable(\"latestLaunchUpcoming\", allLaunches[0].upcoming);\r",
+							"console.log(\"printing launch 0 id, upcoming and date\")\r",
+							"console.log (pm.environment.get(\"latestLaunchID\"));\r",
+							"console.log (pm.environment.get(\"latestLaunchDateUtc\"));\r",
+							"console.log (pm.environment.get(\"latestLaunchDateUtcStr\"));\r",
+							"console.log (pm.environment.get(\"latestLaunchUpcoming\"));\r",
+							"\r",
+							"// Get today's date \r",
+							"\r",
+							"var today = new Date();\r",
+							"var months = ['01', '02', '03','04','05','06','07','08','09','10','11','12'];\r",
+							"var dd = today.getDate();\r",
+							"//var MMM = months[today.getMonth()];\r",
+							"var MMM = today.getMonth();\r",
+							"var yyyy = today.getFullYear();\r",
+							"today = yyyy+'-'+MMM+'-'+dd;\r",
+							"console.log(\"Current Time for event is -> \"+today);\r",
+							"if(latestLaunchDateUtcStr <= today){\r",
+							"    console.log(\"Pass\");\r",
+							"}\r",
+							"\r",
+							"\r",
+							"//use moment \r",
+							"\r",
+							"const moment = require('moment');\r",
+							"console.log(\"moment date utc : \"+moment(latestLaunchDateUtcStr));\r",
+							"\r",
+							"pm.environment.set('currentdate', moment(). format((\"YYYY-MM-DD\")));\r",
+							" console.log(\"Current Date: \", pm.environment.get('currentdate') );\r",
+							" dateDiff = moment(latestLaunchDateUtcStr).isBefore(pm.environment.get('currentdate'))\r",
+							"\r",
+							"pm.test(\"Check Build Date\", () => {\r",
+							"    pm.expect(dateDiff).to.be.true\r",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://api.spacexdata.com/v4/launches/",
+					"protocol": "https",
+					"host": [
+						"api",
+						"spacexdata",
+						"com"
+					],
+					"path": [
+						"v4",
+						"launches",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET SPACE-X Latest Launch",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							" var jsonData = pm.response.json(); \r",
+							"\r",
+							"\r",
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Upcoming is false\", function () {\r",
+							"    pm.expect(jsonData.upcoming).to.eql(false);\r",
+							"});\r",
+							"//use moment \r",
+							"\r",
+							"var latestLaunchDateUtcStr = jsonData.date_utc.substring(0,10);\r",
+							"const moment = require('moment');\r",
+							"console.log(\"moment date utc : \"+moment(latestLaunchDateUtcStr));\r",
+							"\r",
+							"pm.environment.set('currentdate', moment(). format((\"YYYY-MM-DD\")));\r",
+							" console.log(\"Current Date: \", pm.environment.get('currentdate') );\r",
+							" var dateDiff = moment(latestLaunchDateUtcStr).isBefore(pm.environment.get('currentdate'));\r",
+							" var dateDiffEqual = moment(latestLaunchDateUtcStr).isSame(pm.environment.get('currentdate'));\r",
+							"\r",
+							"pm.test(\"Check date is before or equal to today \", function() {\r",
+							"    pm.expect(dateDiff).to.be.true || pm.expect(dateDiffEqual).to.be.true; \r",
+							"});\r",
+							"\r",
+							"pm.test(\"Check ID for latest launch matches with all launches data\", function(){\r",
+							"\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://api.spacexdata.com/v4/launches/latest",
+					"protocol": "https",
+					"host": [
+						"api",
+						"spacexdata",
+						"com"
+					],
+					"path": [
+						"v4",
+						"launches",
+						"latest"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
